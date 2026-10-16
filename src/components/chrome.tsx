@@ -2,6 +2,7 @@ import Link from 'next/link'
 import { firstPhone, mediaUrl, waLink, type Doc } from '@/lib/site'
 import { NAV_LINKS } from '@/lib/nav'
 import { HeaderNav } from './header-nav'
+import { ApplyButton } from './counselling-popup'
 import { Icon, WhatsAppIcon } from './icons'
 
 export function TopBar({ settings }: { settings: Doc }) {
@@ -98,9 +99,9 @@ export function Footer({ settings }: { settings: Doc }) {
               </li>
             ))}
             <li>
-              <Link href="/contact" className="link-line transition-colors hover:text-brand-300">
+              <ApplyButton className="link-line transition-colors hover:text-brand-300">
                 Apply Now
-              </Link>
+              </ApplyButton>
             </li>
           </ul>
         </div>

@@ -5,6 +5,7 @@ import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { NAV_LINKS } from '@/lib/nav'
 import { Icon } from './icons'
+import { ApplyButton } from './counselling-popup'
 
 export function HeaderNav({ phone }: { phone: string }) {
   const [open, setOpen] = useState(false)
@@ -35,9 +36,9 @@ export function HeaderNav({ phone }: { phone: string }) {
             </Link>
           )
         })}
-        <Link href="/contact" className="btn-gold rounded-full px-5 py-2.5 text-sm font-bold shadow-sm">
+        <ApplyButton className="btn-gold rounded-full px-5 py-2.5 text-sm font-bold shadow-sm">
           Apply Free
-        </Link>
+        </ApplyButton>
       </nav>
 
       <div className="flex items-center gap-2 xl:hidden">
@@ -68,13 +69,12 @@ export function HeaderNav({ phone }: { phone: string }) {
                 {l.label}
               </Link>
             ))}
-            <Link
-              href="/contact"
+            <ApplyButton
               onClick={() => setOpen(false)}
-              className="btn-gold mt-2 block rounded-full px-4 py-2.5 text-center font-bold"
+              className="btn-gold mt-2 block w-full rounded-full px-4 py-2.5 text-center font-bold"
             >
               Apply Free
-            </Link>
+            </ApplyButton>
           </div>
         </nav>
       ) : null}

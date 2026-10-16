@@ -5,6 +5,7 @@ import { FaqAccordion } from '@/components/ui'
 import { LeadForm } from '@/components/forms'
 import { ImageSlider } from '@/components/slider'
 import { Services } from '@/components/services'
+import { CounsellingPopup } from '@/components/counselling-popup'
 import { UniversityCard, CountryCard, CourseCard, PostCard } from '@/components/cards'
 import { Icon, WhatsAppIcon, type IconName } from '@/components/icons'
 
@@ -91,6 +92,7 @@ export default async function HomePage() {
 
   return (
     <>
+      <CounsellingPopup />
       {/* ---------------- HERO ---------------- */}
       <section className="hero-veil relative overflow-hidden bg-brand-950 text-white">
         {cover ? (
