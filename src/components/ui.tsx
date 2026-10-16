@@ -30,7 +30,7 @@ export function RevealScript() {
               for (const entry of entries) {
                 if (!entry.isIntersecting) continue
                 entry.target.classList.add('is-visible')
-                io.unobserve(entry.target)
+                io?.unobserve(entry.target)
               }
             },
             { threshold: 0.05, rootMargin: '0px 0px -40px 0px' },

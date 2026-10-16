@@ -57,11 +57,11 @@ export async function findDocs(collection: string, options: Record<string, any> 
   if (!(await dbAvailable())) return fallbackFor(collection)
   try {
     const payload = await withTimeout(pb(), PROBE_TIMEOUT_MS)
-    const res = await withTimeout(
+    const res = (await withTimeout(
       (payload.find as any)({ collection, limit: 100, depth: 2, ...options }),
       8000,
-    )
-    const docs = (res?.docs ?? []) as Doc[]
+    )) as { docs?: Doc[] }
+    const docs = res?.docs ?? []
     return docs.length ? docs : fallbackFor(collection)
   } catch {
     unavailableUntil = Date.now() + COOLDOWN_MS

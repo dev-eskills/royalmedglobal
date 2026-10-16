@@ -1,6 +1,5 @@
 import path from 'path'
 import { fileURLToPath } from 'url'
-import { readFileSync, existsSync } from 'fs'
 import { buildConfig } from 'payload'
 import { mongooseAdapter } from '@payloadcms/db-mongodb'
 import { lexicalEditor } from '@payloadcms/richtext-lexical'
@@ -10,18 +9,6 @@ import { SiteSettings } from './payload/globals'
 
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
-
-// Next.js loads .env itself, but standalone scripts (the seed runner) do not —
-// so populate the environment here for both entry points.
-for (const file of [path.resolve(dirname, '../.env'), path.resolve(dirname, '../.env.local')]) {
-  if (!existsSync(file)) continue
-  for (const line of readFileSync(file, 'utf8').split(/\r?\n/)) {
-    const match = line.match(/^\s*([\w.-]+)\s*=\s*(.*)\s*$/)
-    if (!match) continue
-    const value = match[2].replace(/^["']|["']$/g, '')
-    if (!process.env[match[1]]) process.env[match[1]] = value
-  }
-}
 
 export default buildConfig({
   admin: {
