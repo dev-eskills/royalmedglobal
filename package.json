@@ -6,12 +6,21 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "seed": "tsx src/seed/seed.ts",
+    "payload": "payload",
+    "generate:importmap": "payload generate:importmap",
+    "generate:types": "payload generate:types"
   },
   "dependencies": {
+    "@payloadcms/db-mongodb": "^3.91.0",
+    "@payloadcms/next": "^3.91.0",
+    "@payloadcms/richtext-lexical": "^3.91.0",
     "next": "16.4.2",
+    "payload": "^3.91.0",
     "react": "19.3.0",
-    "react-dom": "19.3.0"
+    "react-dom": "19.3.0",
+    "sharp": "^0.35.5"
   },
   "devDependencies": {
     "@tailwindcss/turbopack": "^4",
@@ -21,6 +30,7 @@
     "eslint": "^9",
     "eslint-config-next": "16.4.2",
     "tailwindcss": "^4",
+    "tsx": "^4.23.15",
     "typescript": "^5"
   }
 }

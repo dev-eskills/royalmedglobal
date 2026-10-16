@@ -1,1 +1,344 @@
 @import "tailwindcss";
+
+/* Royal Med Global — brand tokens mirrored from royalmedglobal.in */
+@theme {
+  --font-sans: "Instrument Sans", ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji",
+    "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+  /* Real site runs a single type family; alias kept so existing classes resolve. */
+  --font-display: "Instrument Sans", ui-sans-serif, system-ui, sans-serif;
+
+  /* Tomato red — warm premium desert primary. */
+  --color-brand-50: #fef3f1;
+  --color-brand-100: #fde4e1;
+  --color-brand-200: #fbcfcb;
+  --color-brand-300: #f8a9a3;
+  --color-brand-400: #f4736a;
+  --color-brand-500: #ee4139;
+  --color-brand-600: #d92d26;
+  --color-brand-700: #b4231c;
+  --color-brand-800: #8f1d17;
+  --color-brand-900: #771c16;
+  --color-brand-950: #3f0a07;
+
+  /* Royal gold — sampled from the brand crest. */
+  --color-gold-50: #fbf7ea;
+  --color-gold-100: #f6ecd0;
+  --color-gold-200: #edd9a3;
+  --color-gold-300: #e3c374;
+  --color-gold-400: #d8ac4e;
+  --color-gold-500: #c9a227;
+  --color-gold-600: #a88620;
+  --color-gold-700: #866a1c;
+  --color-gold-800: #6b5518;
+
+  /* Warm desert sand for light sections. */
+  --color-sand-50: #faf7ef;
+  --color-sand-100: #f4eedd;
+  --color-sand-200: #e9dfc4;
+
+  --color-ink: #1c1410;
+}
+
+html {
+  scroll-behavior: smooth;
+  scroll-padding-top: 6rem;
+}
+
+body {
+  background: #ffffff;
+  color: var(--color-ink);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+}
+
+::selection {
+  background: var(--color-brand-700);
+  color: #fff;
+}
+
+/* ---------- Scroll reveal ---------- */
+/* Hidden state is scoped to `.js` so content is never invisible without JS. */
+.js .reveal {
+  opacity: 0;
+  transform: translateY(24px);
+}
+.reveal {
+  transition:
+    opacity 0.8s cubic-bezier(0.22, 1, 0.36, 1),
+    transform 0.8s cubic-bezier(0.22, 1, 0.36, 1);
+  transition-delay: var(--reveal-delay, 0ms);
+  will-change: opacity, transform;
+}
+.reveal.is-visible {
+  opacity: 1;
+  transform: none;
+}
+
+/* Stagger children of a grid without extra markup. */
+.stagger > * {
+  transition-delay: calc(var(--i, 0) * 70ms);
+}
+
+/* ---------- Animated link underline ---------- */
+.link-line {
+  position: relative;
+  display: inline-block;
+}
+.link-line::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: -3px;
+  height: 1.5px;
+  width: 100%;
+  border-radius: 999px;
+  background: currentColor;
+  transform: scaleX(0);
+  transform-origin: right;
+  transition: transform 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.link-line:hover::after,
+.link-line:focus-visible::after {
+  transform: scaleX(1);
+  transform-origin: left;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  .js .reveal {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* ---------- Hero backdrop ---------- */
+.hero-veil {
+  background-image:
+    radial-gradient(circle at 12% 18%, rgba(230, 63, 87, 0.28), transparent 45%),
+    radial-gradient(circle at 88% 8%, rgba(201, 162, 39, 0.22), transparent 42%),
+    radial-gradient(circle at 50% 110%, rgba(201, 162, 39, 0.12), transparent 55%);
+}
+
+/* ---------- Gold & shine ---------- */
+/* Shimmering gold gradient text for premium headings on dark backgrounds. */
+.text-gold-shine {
+  background: linear-gradient(
+    100deg,
+    #edd9a3 0%,
+    #c9a227 22%,
+    #fbf7ea 40%,
+    #c9a227 58%,
+    #edd9a3 78%,
+    #c9a227 100%
+  );
+  background-size: 200% auto;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  animation: gold-pan 6s linear infinite;
+}
+@keyframes gold-pan {
+  to {
+    background-position: 200% center;
+  }
+}
+
+/* Thin gold rule with glowing centre — section dividers. */
+.gold-rule {
+  background: linear-gradient(90deg, transparent, var(--color-gold-500) 30%, var(--color-gold-300) 50%, var(--color-gold-500) 70%, transparent);
+  height: 1px;
+}
+
+/* Warm sand surface with a faint grain, for light alternating sections. */
+.bg-sand {
+  background-color: var(--color-sand-50);
+  background-image: radial-gradient(rgba(134, 106, 28, 0.07) 1px, transparent 1px);
+  background-size: 22px 22px;
+}
+
+/* Gold-outlined glass card for dark sections. */
+.gold-card {
+  border: 1px solid rgba(201, 162, 39, 0.35);
+  background: linear-gradient(160deg, rgba(255, 255, 255, 0.08), rgba(255, 255, 255, 0.02));
+  box-shadow:
+    inset 0 1px 0 rgba(251, 247, 234, 0.12),
+    0 24px 60px -30px rgba(0, 0, 0, 0.7);
+}
+
+/* Glossy gold primary action. */
+.btn-gold {
+  position: relative;
+  overflow: hidden;
+  color: #3a2f08;
+  background-image: linear-gradient(135deg, #e3c374, #c9a227 45%, #a88620);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.55),
+    inset 0 -2px 6px rgba(107, 85, 24, 0.45),
+    0 14px 30px -14px rgba(201, 162, 39, 0.8);
+  transition:
+    transform 0.25s ease,
+    box-shadow 0.25s ease,
+    filter 0.25s ease;
+}
+.btn-gold:hover {
+  filter: brightness(1.06);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.55),
+    inset 0 -2px 6px rgba(107, 85, 24, 0.45),
+    0 20px 40px -14px rgba(201, 162, 39, 0.9);
+}
+.btn-gold:active {
+  transform: scale(0.99);
+}
+.btn-gold::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(100deg, transparent 20%, rgba(255, 255, 255, 0.5) 50%, transparent 80%);
+  transform: translateX(-120%);
+  transition: transform 0.85s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.btn-gold:hover::after {
+  transform: translateX(120%);
+}
+
+/* ---------- Surfaces ---------- */
+.card-lift {
+  transition:
+    transform 0.35s cubic-bezier(0.22, 1, 0.36, 1),
+    box-shadow 0.35s cubic-bezier(0.22, 1, 0.36, 1),
+    border-color 0.35s ease;
+}
+.card-lift:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 28px 55px -24px rgba(69, 7, 18, 0.35);
+  border-color: var(--color-brand-200);
+}
+
+/* Glossy primary action */
+.btn-brand {
+  position: relative;
+  overflow: hidden;
+  background-image: linear-gradient(135deg, var(--color-brand-700), var(--color-brand-500));
+  transition:
+    transform 0.25s ease,
+    box-shadow 0.25s ease,
+    filter 0.25s ease;
+}
+.btn-brand:hover {
+  filter: brightness(1.07);
+  box-shadow: 0 16px 34px -14px rgba(173, 21, 53, 0.75);
+}
+.btn-brand:active {
+  transform: scale(0.99);
+}
+.btn-brand::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    100deg,
+    transparent 20%,
+    rgba(255, 255, 255, 0.35) 50%,
+    transparent 80%
+  );
+  transform: translateX(-120%);
+  transition: transform 0.85s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.btn-brand:hover::after {
+  transform: translateX(120%);
+}
+
+/* ---------- Ambient motion ---------- */
+@keyframes float-pulse {
+  0%,
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(1.35);
+    opacity: 0.55;
+  }
+}
+.animate-float-pulse {
+  animation: float-pulse 2.5s ease-in-out infinite;
+}
+
+@keyframes floaty {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+.animate-floaty {
+  animation: floaty 6s ease-in-out infinite;
+}
+
+/* Marquee strip */
+@keyframes marquee {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+.animate-marquee {
+  animation: marquee 32s linear infinite;
+}
+.marquee-mask {
+  -webkit-mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent);
+  mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent);
+}
+
+/* Gentle float for hero imagery */
+@keyframes drift {
+  0%,
+  100% {
+    transform: translateY(0) scale(1);
+  }
+  50% {
+    transform: translateY(-14px) scale(1.015);
+  }
+}
+.animate-drift {
+  animation: drift 9s ease-in-out infinite;
+}
+
+/* Service card content swap — quick fade + rise, respects reduced motion via the global guard. */
+@keyframes card-in {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+.animate-card-in {
+  animation: card-in 0.45s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* Hide scrollbars on horizontal option rails while keeping swipe scroll. */
+.scrollbar-none {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+.scrollbar-none::-webkit-scrollbar {
+  display: none;
+}
