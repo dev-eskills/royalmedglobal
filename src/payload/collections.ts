@@ -1,4 +1,5 @@
 import type { CollectionConfig } from 'payload'
+import { flagForCountry } from './flags'
 
 export const slugify = (value: string): string =>
   value
@@ -19,6 +20,27 @@ const autoSlug = {
         !data.slug
       ) {
         data.slug = slugify(data.title)
+      }
+      return data
+    },
+  ],
+}
+
+/** Fill flagEmoji from the country name when the editor leaves it empty. */
+const autoFlag = {
+  beforeChange: [
+    ({
+      data,
+      originalDoc,
+    }: {
+      data?: Record<string, unknown>
+      originalDoc?: Record<string, unknown>
+    }) => {
+      if (data && !data.flagEmoji) {
+        const title =
+          typeof data.title === 'string' && data.title ? data.title : originalDoc?.title
+        const flag = typeof title === 'string' ? flagForCountry(title) : ''
+        if (flag) data.flagEmoji = flag
       }
       return data
     },
@@ -54,7 +76,7 @@ export const Media: CollectionConfig = {
   // Public marketing site — media must be readable without a session.
   access: { read: () => true },
   upload: {
-    staticDir: 'media',
+    staticDir: 'public/media',
     mimeTypes: ['image/*'],
   },
   fields: [{ name: 'alt', type: 'text', required: true }],
@@ -62,8 +84,8 @@ export const Media: CollectionConfig = {
 
 export const Countries: CollectionConfig = {
   slug: 'countries',
-  admin: { useAsTitle: 'title' },
-  hooks: autoSlug,
+  admin: { useAsTitle: 'title', hidden: true },
+  hooks: { ...autoSlug, ...autoFlag },
   fields: [
     { name: 'title', type: 'text', required: true },
     { name: 'slug', type: 'text', required: true, unique: true, index: true },
@@ -79,7 +101,7 @@ export const Countries: CollectionConfig = {
 
 export const Cities: CollectionConfig = {
   slug: 'cities',
-  admin: { useAsTitle: 'title' },
+  admin: { useAsTitle: 'title', hidden: true },
   hooks: autoSlug,
   fields: [
     { name: 'title', type: 'text', required: true },
@@ -92,14 +114,20 @@ export const Cities: CollectionConfig = {
 
 export const Universities: CollectionConfig = {
   slug: 'universities',
-  admin: { useAsTitle: 'title' },
+  admin: { useAsTitle: 'title', hidden: true },
   hooks: autoSlug,
   fields: [
     { name: 'title', type: 'text', required: true },
     { name: 'slug', type: 'text', required: true, unique: true, index: true },
     { name: 'shortName', type: 'text', admin: { description: 'e.g. BITU' } },
     { name: 'country', type: 'relationship', relationTo: 'countries', required: true },
-    { name: 'city', type: 'relationship', relationTo: 'cities' },
+    {
+      name: 'city',
+      type: 'relationship',
+      relationTo: 'cities',
+      admin: { description: 'Only cities of the selected country are shown' },
+      filterOptions: ({ data }) => (data?.country ? { country: { equals: data.country } } : true),
+    },
     { name: 'tagline', type: 'text' },
     { name: 'logo', type: 'upload', relationTo: 'media' },
     { name: 'cover', type: 'upload', relationTo: 'media' },
@@ -157,7 +185,7 @@ export const Universities: CollectionConfig = {
 
 export const Courses: CollectionConfig = {
   slug: 'courses',
-  admin: { useAsTitle: 'title' },
+  admin: { useAsTitle: 'title', hidden: true },
   hooks: autoSlug,
   fields: [
     { name: 'title', type: 'text', required: true },
@@ -195,6 +223,12 @@ export const Testimonials: CollectionConfig = {
     { name: 'name', type: 'text', required: true },
     { name: 'role', type: 'text', admin: { description: 'e.g. MBBS Student, Batch 2024' } },
     { name: 'university', type: 'relationship', relationTo: 'universities' },
+    {
+      name: 'photo',
+      type: 'upload',
+      relationTo: 'media',
+      admin: { description: 'Optional — appears on the review card' },
+    },
     { name: 'quote', type: 'textarea', required: true },
     { name: 'rating', type: 'number', min: 1, max: 5, defaultValue: 5 },
     { name: 'featured', type: 'checkbox', defaultValue: true },

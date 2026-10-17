@@ -54,7 +54,10 @@ export function CountryCard({ c, count }: { c: Doc; count?: number }) {
       <div className="relative h-36 overflow-hidden bg-brand-50">
         <Img src={img} alt={c.title} className="h-full w-full object-cover transition duration-500 group-hover:scale-105" />
         <span className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-ink/90 to-transparent p-4 pt-8">
-          <span className="text-lg font-bold text-white">{c.title}</span>
+          <span className="text-lg font-bold text-white">
+            {c.flagEmoji ? <span className="mr-1.5">{c.flagEmoji}</span> : null}
+            {c.title}
+          </span>
         </span>
       </div>
       <div className="p-4">
@@ -66,6 +69,28 @@ export function CountryCard({ c, count }: { c: Doc; count?: number }) {
         ) : null}
       </div>
     </Link>
+  )
+}
+
+export function CityCard({ c, count }: { c: Doc; count?: number }) {
+  const img = mediaUrl(c.image)
+  return (
+    <div className="card-lift overflow-hidden rounded-2xl border border-gray-100 bg-white shadow-sm">
+      <div className="relative h-36 overflow-hidden bg-brand-50">
+        <Img src={img} alt={c.title} className="h-full w-full object-cover" />
+        <span className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-ink/90 to-transparent p-4 pt-8">
+          <span className="text-lg font-bold text-white">{c.title}</span>
+        </span>
+      </div>
+      <div className="p-4">
+        {c.description ? <p className="line-clamp-2 text-sm text-gray-600">{c.description}</p> : null}
+        {typeof count === 'number' && count > 0 ? (
+          <p className="mt-2 text-xs font-semibold text-brand-600">
+            {count} {count === 1 ? 'university' : 'universities'}
+          </p>
+        ) : null}
+      </div>
+    </div>
   )
 }
 

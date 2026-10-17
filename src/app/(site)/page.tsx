@@ -6,6 +6,7 @@ import { LeadForm } from '@/components/forms'
 import { ImageSlider } from '@/components/slider'
 import { Services } from '@/components/services'
 import { CounsellingPopup } from '@/components/counselling-popup'
+import { Reviews } from '@/components/reviews'
 import { UniversityCard, CountryCard, CourseCard, PostCard } from '@/components/cards'
 import { Icon, WhatsAppIcon, type IconName } from '@/components/icons'
 
@@ -70,14 +71,35 @@ const MISSION_VISION = [
 ]
 
 export default async function HomePage() {
-  const [settings, universities, countries, courses, faqs, posts] = await Promise.all([
+  const [settings, universities, countries, courses, faqs, posts, testimonials] = await Promise.all([
     getSettings(),
     findDocs('universities', { sort: 'title' }),
     findDocs('countries', { sort: 'title' }),
     findDocs('courses', { sort: 'title' }),
     findDocs('faqs', { sort: 'order' }),
     findDocs('posts', { sort: '-publishedDate', limit: 4 }),
+    findDocs('testimonials', {
+      sort: '-createdAt',
+      where: { featured: { equals: true } },
+      fallbackOnEmpty: false,
+    }),
   ])
+
+  const countBy: Record<string, number> = {}
+  universities.forEach((u) => {
+    const id = typeof u.country === 'object' ? u.country?.id : u.country
+    if (id) countBy[id] = (countBy[id] ?? 0) + 1
+  })
+
+  const reviews = testimonials.map((t) => ({
+    id: String(t.id),
+    name: t.name,
+    role: t.role,
+    quote: t.quote,
+    rating: t.rating,
+    universityTitle: typeof t.university === 'object' ? t.university?.title : undefined,
+    photoUrl: mediaUrl(t.photo),
+  }))
 
   const featured = universities.find((u) => u.featured) ?? universities[0]
   const fees = featured?.fees ?? {}
@@ -443,7 +465,7 @@ export default async function HomePage() {
           <SectionHead eyebrow="Destinations" title="Study Countries" />
           <div className="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
             {countries.map((c) => (
-              <CountryCard key={c.id} c={c} />
+              <CountryCard key={c.id} c={c} count={countBy[c.id]} />
             ))}
           </div>
         </section>
@@ -465,6 +487,20 @@ export default async function HomePage() {
             >
               View All Universities
             </Link>
+          </div>
+        </section>
+      ) : null}
+
+      {/* ---------------- REVIEWS ---------------- */}
+      {reviews.length ? (
+        <section className="bg-gray-50">
+          <div className="mx-auto max-w-7xl px-4 py-16 lg:py-20">
+            <SectionHead
+              eyebrow="Testimonials"
+              title="What Students & Parents Say"
+              sub="Honest guidance, transparent fees — in their own words."
+            />
+            <Reviews reviews={reviews} />
           </div>
         </section>
       ) : null}

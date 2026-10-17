@@ -119,7 +119,51 @@ const FACILITIES = [
   { title: 'Indoor Sports Complex', text: 'Indoor sports facilities alongside an outdoor stadium and gym.' },
   { title: 'Student Canteen', text: 'Student canteen and mess facilities on campus.' },
   { title: 'On-Campus Hostels', text: 'Secure on-campus hostels for international students.' },
-  { title: 'Auditorium & Events', text: 'Auditorium and event spaces for college activities.' },
+    { title: 'Auditorium & Events', text: 'Auditorium and event spaces for college activities.' },
+]
+
+/* REPLACE ME — dummy Russia data for testing the admin→site flow. */
+const KAZAN_GALLERY_FILES = [
+  'hospital.jpg',
+  'library-1.jpg',
+  'lab-anatomy.jpg',
+  'classroom.jpg',
+  'canteen.jpg',
+  'dorm-building.jpg',
+] as const
+
+const KAZAN_FACILITIES = [
+  { title: 'University Teaching Hospital', text: 'An on-campus teaching hospital for early clinical exposure.', image: 'hospital.jpg' },
+  { title: 'Modern Library', text: 'Books, journals and digital resources for students and faculty.', image: 'library-1.jpg' },
+  { title: 'Anatomy Practice Lab', text: 'Hands-on anatomy training in modern laboratories.', image: 'lab-anatomy.jpg' },
+  { title: 'Smart Classrooms', text: 'Digital smart classes across every department.', image: 'classroom.jpg' },
+  { title: 'Student Canteen', text: 'Student canteen and mess facilities on campus.', image: 'canteen.jpg' },
+  { title: 'On-Campus Hostels', text: 'Secure on-campus hostels for international students.', image: 'dorm-building.jpg' },
+]
+
+/* REPLACE ME — sample reviews for testing the homepage section. */
+const SAMPLE_TESTIMONIALS = [
+  {
+    name: 'Aarav Sharma',
+    role: 'MBBS Student, Batch 2024',
+    quote:
+      'The counsellors guided me from NEET counselling to my hostel room in Bukhara. Everything they promised on paper is exactly what happened — no hidden charges at all.',
+    rating: 5,
+  },
+  {
+    name: 'Priya Verma',
+    role: 'MBBS Student, Batch 2025',
+    quote:
+      'Being the first in my family to go abroad, I was nervous. The team handled my admission letter, visa and travel, and even met us at the airport.',
+    rating: 5,
+  },
+  {
+    name: 'Mohammed Irfan',
+    role: 'Parent',
+    quote:
+      'As a parent, transparent fees and honest advice mattered most to me. Royal Med Global explained every cost in writing before we paid anything.',
+    rating: 4,
+  },
 ]
 
 type Coll = 'countries' | 'cities' | 'universities' | 'courses' | 'faqs'
@@ -339,6 +383,99 @@ export async function runSeed() {
     })
   }
 
+  // 7b. REPLACE ME — Russia dummy data (country, city, university, course).
+  // Images below reuse existing placeholders; swap them from the admin later.
+  const russiaId = await upsert('countries', 'russia', {
+    title: 'Russia',
+    tagline: 'Government medical universities, English-medium MBBS, WHO & NMC recognised',
+    description: para(
+      'Russia has been a leading destination for Indian medical students for decades. Government medical universities follow a 6-year MBBS programme taught in English with affordable, transparent fees.',
+      'Indian students get direct admission after NEET, with no IELTS or TOEFL requirement, and the degrees are recognised by the WHO and listed with the National Medical Commission.',
+    ),
+    currencyNote: '$1 = about ₹90',
+    // flagEmoji intentionally left empty — the auto-flag hook fills it in.
+    featured: true,
+    ...(mediaIds['campus-gate.jpg'] ? { image: mediaIds['campus-gate.jpg'] } : {}),
+  })
+  log.push('REPLACE ME: Russia country added with a placeholder image')
+
+  const kazanId = await upsert('cities', 'kazan', {
+    title: 'Kazan',
+    country: russiaId,
+    description:
+      'Kazan is a modern, student-friendly city on the Volga river — home to one of the oldest and most respected medical universities in Russia, with a growing Indian student community.',
+    ...(mediaIds['bukhara-city.jpg'] ? { image: mediaIds['bukhara-city.jpg'] } : {}),
+  })
+  log.push('REPLACE ME: Kazan city added with a placeholder image')
+
+  const kazanGallery = KAZAN_GALLERY_FILES.map((f) => mediaIds[f]).filter(Boolean)
+  const kazanFacilities = KAZAN_FACILITIES.map((f) => ({
+    title: f.title,
+    text: f.text,
+    ...(mediaIds[f.image] ? { image: mediaIds[f.image] } : {}),
+  }))
+  const ksmId = await upsert('universities', 'kazan-state-medical-university', {
+    title: 'Kazan State Medical University',
+    shortName: 'KSMU',
+    country: russiaId,
+    city: kazanId,
+    tagline: 'One of the oldest medical universities in Russia — 200+ years of medical education',
+    fees: {
+      tuitionPerYear: 4200,
+      currency: '$',
+      totalTuition: '$25,200',
+      totalTuitionINR: '₹22,68,000',
+      note: 'Indicative tuition for the full 6-year MBBS programme. Hostel, mess and other charges are separate. Fees are subject to change by the university.',
+    },
+    duration: '6 Years',
+    hospitals: 25,
+    recognition: ['WHO', 'NMC'],
+    englishMedium: true,
+    ieltsRequired: false,
+    neetRequired: true,
+    about: para(
+      'Kazan State Medical University is one of the oldest medical universities in Russia, offering a 6-year English-medium MBBS programme designed for international students.',
+      'The university is WHO-listed and recognised by the National Medical Commission, with clinical training across affiliated hospitals in Kazan.',
+      'Kazan is a safe, modern and affordable student city with a growing Indian community, making it a comfortable first destination for Indian medical aspirants.',
+    ),
+    facilities: kazanFacilities,
+    faqs: [
+      {
+        question: 'Is the MBBS degree from Russia recognised in India?',
+        answer:
+          'Yes. Russian government medical universities are WHO-listed and their degrees are recognised by the National Medical Commission (NMC). After completing MBBS you can appear for the NEXT/FMGE licensing exam to practise in India.',
+      },
+      {
+        question: 'Is NEET required for admission?',
+        answer:
+          'Yes. As per NMC rules, Indian students must qualify NEET to study MBBS abroad and to be eligible to practise in India later. No IELTS or TOEFL is required.',
+      },
+      {
+        question: 'What is the total cost of the programme?',
+        answer:
+          'Indicative tuition is $4,200 per year — about ₹22,68,000 in total for the full 6-year programme. Hostel and living costs are separate and affordable.',
+      },
+    ],
+    featured: false,
+    metaTitle: 'MBBS in Russia at Kazan State Medical University | Royal Med Global',
+    metaDescription:
+      'Study MBBS at Kazan State Medical University, Russia. English medium, WHO & NMC recognised, no IELTS/TOEFL, affordable fees.',
+    ...(mediaIds['hero-campus.jpg'] ? { cover: mediaIds['hero-campus.jpg'] } : {}),
+    ...(kazanGallery.length ? { gallery: kazanGallery } : {}),
+  })
+  log.push('REPLACE ME: Kazan State Medical University added with placeholder images and indicative fees')
+
+  await upsert('courses', 'mbbs-ksmu', {
+    title: 'MBBS (General Medicine)',
+    shortName: 'MBBS',
+    duration: '6 years',
+    level: 'UG',
+    description:
+      'Six-year English-medium MBBS programme at Kazan State Medical University with clinical training across affiliated hospitals.',
+    university: ksmId,
+    featured: false,
+  })
+
   // 8. FAQs — rebuilt from scratch so previous copy cannot linger.
   const existingFaqs = await payload.find({ collection: 'faqs', limit: 500 })
   for (const doc of existingFaqs.docs) {
@@ -348,6 +485,25 @@ export async function runSeed() {
     await payload.create({ collection: 'faqs', data: { ...f, category: 'Admission', order: i + 1 } })
   }
   log.push(`Rebuilt ${FAQS.length} FAQs`)
+
+  // 9. REPLACE ME — sample reviews so the homepage section is testable.
+  // Swap these for real student reviews from /admin → Testimonials.
+  for (const t of SAMPLE_TESTIMONIALS) {
+    const found = await payload.find({
+      collection: 'testimonials',
+      where: { name: { equals: t.name } },
+      limit: 1,
+    })
+    if (found.docs.length) {
+      log.push(`Testimonial already present: ${t.name}`)
+      continue
+    }
+    await payload.create({
+      collection: 'testimonials',
+      data: { ...t, university: uniId, featured: true },
+    })
+    log.push(`REPLACE ME: sample testimonial created — ${t.name}`)
+  }
 
   return { ok: true, log }
 }

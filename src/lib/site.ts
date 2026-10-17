@@ -53,16 +53,22 @@ function dbAvailable(): Promise<boolean> {
   return probePromise
 }
 
-export async function findDocs(collection: string, options: Record<string, any> = {}): Promise<Doc[]> {
+export async function findDocs(
+  collection: string,
+  options: Record<string, any> & { fallbackOnEmpty?: boolean } = {},
+): Promise<Doc[]> {
+  // fallbackOnEmpty: false → an empty result from a reachable database stays
+  // empty (the editor chose it); the fallback still covers DB outages.
+  const { fallbackOnEmpty = true, ...query } = options
   if (!(await dbAvailable())) return fallbackFor(collection)
   try {
     const payload = await withTimeout(pb(), PROBE_TIMEOUT_MS)
     const res = (await withTimeout(
-      (payload.find as any)({ collection, limit: 100, depth: 2, ...options }),
+      (payload.find as any)({ collection, limit: 100, depth: 2, ...query }),
       8000,
     )) as { docs?: Doc[] }
     const docs = res?.docs ?? []
-    return docs.length ? docs : fallbackFor(collection)
+    return docs.length || !fallbackOnEmpty ? docs : fallbackFor(collection)
   } catch {
     unavailableUntil = Date.now() + COOLDOWN_MS
     return fallbackFor(collection)
@@ -97,6 +103,8 @@ export async function getSettings(): Promise<Doc> {
  */
 export function mediaUrl(m: any): string | null {
   if (!m || typeof m !== 'object') return null
+  // Blob-stored uploads carry a full https URL — use it as-is.
+  if (typeof m.url === 'string' && /^https?:\/\//i.test(m.url)) return m.url
   if (typeof m.filename === 'string' && m.filename) return `/media/${m.filename}`
   if (typeof m.url === 'string' && m.url) {
     const file = m.url.split('/').pop()

@@ -128,6 +128,7 @@ const country: Doc = {
     },
   },
   currencyNote: '$1 = about ₹90',
+  flagEmoji: '🇺🇿',
   featured: true,
   image: img('bukhara-city.jpg'),
 }
@@ -216,6 +217,36 @@ const university: Doc = {
     'Study MBBS at Bukhara Innovative Education & Medical University, Uzbekistan. WHO & NMC recognised, English medium, no IELTS/TOEFL, affordable fees.',
 }
 
+const testimonials: Doc[] = [
+  {
+    id: 'fallback-testimonial-1',
+    name: 'Aarav Sharma',
+    role: 'MBBS Student, Batch 2024',
+    quote:
+      'The counsellors guided me from NEET counselling to my hostel room in Bukhara. Everything they promised on paper is exactly what happened — no hidden charges at all.',
+    rating: 5,
+    university: 'fallback-university-bitu',
+  },
+  {
+    id: 'fallback-testimonial-2',
+    name: 'Priya Verma',
+    role: 'MBBS Student, Batch 2025',
+    quote:
+      'Being the first in my family to go abroad, I was nervous. The team handled my admission letter, visa and travel, and even met us at the airport.',
+    rating: 5,
+    university: 'fallback-university-bitu',
+  },
+  {
+    id: 'fallback-testimonial-3',
+    name: 'Mohammed Irfan',
+    role: 'Parent',
+    quote:
+      'As a parent, transparent fees and honest advice mattered most to me. Royal Med Global explained every cost in writing before we paid anything.',
+    rating: 4,
+    university: 'fallback-university-bitu',
+  },
+]
+
 const courses: Doc[] = [
   {
     id: 'fallback-course-mbbs',
@@ -261,6 +292,7 @@ export const FALLBACK_DOCS: Record<string, Doc[]> = {
   universities: [university],
   courses,
   faqs: FAQS.map((f, i) => ({ ...f, id: `fallback-faq-${i}`, category: 'Admission', order: i + 1 })),
+  testimonials,
   posts: [],
 }
 
